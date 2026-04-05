@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aurentia Group — Synergies Écosystème</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.26.2/babel.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; overflow: hidden; }
+  #root { width: 100vw; height: 100vh; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+
+const THEMES = {
+  dark: {
+    bg: "#0c0c0b",
+    surface: "rgba(255,255,255,0.04)",
+    surfaceHover: "rgba(255,255,255,0.07)",
+    border: "rgba(255,255,255,0.08)",
+    text: "#ffffff",
+    textMuted: "rgba(255,255,255,0.45)",
+    textFaint: "rgba(255,255,255,0.2)",
+    dot: "rgba(255,255,255,0.06)",
+    cardBg: "rgba(17,17,16,0.95)",
+    panelBg: "rgba(255,255,255,0.02)",
+    aurentia: "#ffffff",
+    toggleBg: "rgba(255,255,255,0.06)",
+    glow: 0.25,
+  },
+  light: {
+    bg: "#f5f5f0",
+    surface: "rgba(0,0,0,0.04)",
+    surfaceHover: "rgba(0,0,0,0.06)",
+    border: "rgba(0,0,0,0.08)",
+    text: "#1a1a18",
+    textMuted: "rgba(0,0,0,0.5)",
+    textFaint: "rgba(0,0,0,0.2)",
+    dot: "rgba(0,0,0,0.06)",
+    cardBg: "rgba(255,255,255,0.9)",
+    panelBg: "rgba(0,0,0,0.02)",
+    aurentia: "#1a1a18",
+    toggleBg: "rgba(0,0,0,0.06)",
+    glow: 0.12,
+  },
+};
+
+const ENTITIES = [
+  { id: "entrepreneurs", label: "ENTREPRENEURS", color: "#e8461e", icon: "E", type: "SaaS B2C · Hub central", desc: "Plateforme IA · Lead magnet freemium · Hub central de données" },
+  { id: "incubators", label: "INCUBATORS", color: "#2563eb", icon: "I", type: "SaaS B2B", desc: "Module B2B · 1 contrat = 20-200 entrepreneurs actifs" },
+  { id: "agencies-saas", label: "AGENCIES", color: "#16a34a", icon: "A", type: "SaaS B2B · Claude-native", desc: "Système opérationnel agences via MCP. 5 rôles, 28 EPICs." },
+  { id: "agency", label: ".agency", isAgency: true, color: "#444444", icon: ".ag", type: "Agence web · Service", desc: "Agence web IA conciergeries · 17 commandes · Marge 50%" },
+  { id: "investors", label: "INVESTORS", color: "#dc2626", icon: "$", type: "SaaS B2B · En conception", desc: "Module investisseurs & due diligence · En conception" },
+  { id: "formation", label: "FORMATION IA", color: "#c2410c", icon: "F", type: "Plateforme + Service", desc: "17 modules · 542 skills · 119K mots · Certifications" },
+];
+
+const SYNERGIES = [
+  { from: "entrepreneurs", to: "incubators", text: "Deal flow qualifié (dossiers avec scores, risques, marché)" },
+  { from: "entrepreneurs", to: "investors", text: "Deal flow qualifié (data structurée des entrepreneurs)" },
+  { from: "entrepreneurs", to: "agencies-saas", text: "Marketplace de freelances" },
+  { from: "entrepreneurs", to: "agency", text: "Apport de leads (entrepreneurs qui veulent leur propre agence)" },
+  { from: "entrepreneurs", to: "formation", text: "Upsell (veulent mieux utiliser Claude)" },
+  { from: "incubators", to: "entrepreneurs", text: "Acquisition en lot (1 contrat = 20-200 users, CAC ~0)" },
+  { from: "incubators", to: "entrepreneurs", text: "Rétention (habitude créée pendant l'incubation)", dup: true },
+  { from: "incubators", to: "investors", text: "Connexion Demo Days → investisseurs. Signaux qualité (pré-filtré)" },
+  { from: "incubators", to: "formation", text: "Cross-sell sessions groupées. Canal de distribution B2B" },
+  { from: "agencies-saas", to: "entrepreneurs", text: "Apport de leads (agences formées deviennent utilisatrices)" },
+  { from: "agencies-saas", to: "agency", text: "Apport d'affaire + Mise en avant (marketplace)" },
+  { from: "agencies-saas", to: "formation", text: "Apport de leads (agences veulent former leurs équipes)" },
+  { from: "agency", to: "entrepreneurs", text: "Apport de leads (conciergeries structurent leur business)" },
+  { from: "agency", to: "incubators", text: "Apport de leads (startups incubées ont besoin de sites / apps)" },
+  { from: "agency", to: "agencies-saas", text: "Réductions site / app client" },
+  { from: "agency", to: "formation", text: "Apport de leads (agences classiques veulent se former à l'IA)" },
+  { from: "investors", to: "entrepreneurs", text: "Contenu réutilisé dans le Formation Hub" },
+  { from: "investors", to: "agency", text: "Apport de leads (investisseurs facilitent deals avec portfolio companies)" },
+  { from: "investors", to: "formation", text: "Apport de leads" },
+  { from: "formation", to: "entrepreneurs", text: "Apport de leads (formés découvrent le SaaS)" },
+  { from: "formation", to: "agencies-saas", text: "Apport d'affaire + Mise en avant (marketplace)" },
+  { from: "formation", to: "agency", text: "Apport de leads (agences classiques formées veulent externaliser)" },
+];
+
+function getEntity(id) { return ENTITIES.find(e => e.id === id); }
+
+const RADIUS = 250;
+const CX = 400;
+const CY = 320;
+const ANGLE_OFF = -Math.PI / 2;
+
+function getPos(i, n) {
+  const a = ANGLE_OFF + (2 * Math.PI * i) / n;
+  return { x: CX + RADIUS * Math.cos(a), y: CY + RADIUS * Math.sin(a) };
+}
+
+const positions = {};
+ENTITIES.forEach((e, i) => { positions[e.id] = getPos(i, ENTITIES.length); });
+
+function buildPath(fid, tid) {
+  const f = positions[fid], t = positions[tid];
+  const dx = t.x - f.x, dy = t.y - f.y;
+  const dist = Math.sqrt(dx * dx + dy * dy);
+  const px = -dy / dist, py = dx / dist;
+  const curve = dist * 0.18;
+  const mx = (f.x + t.x) / 2 + px * curve;
+  const my = (f.y + t.y) / 2 + py * curve;
+  const sh = 56;
+  const r = sh / dist;
+  return `M ${f.x + dx * r},${f.y + dy * r} Q ${mx},${my} ${t.x - dx * r},${t.y - dy * r}`;
+}
+
+function AurentiaLogo({ entity, theme, size = "md" }) {
+  const t = THEMES[theme];
+  const s = size === "lg" ? 1.3 : size === "sm" ? 0.7 : 1;
+  if (entity.isAgency) {
+    return (
+      <div style={{ textAlign: "center", lineHeight: 1 }}>
+        <span style={{ fontWeight: 500, fontSize: 14 * s, color: t.textMuted }}>Aurentia</span>
+        <span style={{ fontWeight: 800, fontSize: 16 * s, color: t.aurentia }}>.agency</span>
+      </div>
+    );
+  }
+  return (
+    <div style={{ textAlign: "center", lineHeight: 1.2 }}>
+      <div style={{ fontWeight: 500, fontSize: 13 * s, color: t.textMuted }}>Aurentia</div>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 4 * s, marginTop: 2 }}>
+        {entity.id !== "formation" && <span style={{ fontWeight: 400, fontSize: 11 * s, color: t.textMuted }}>for</span>}
+        <span style={{ fontWeight: 800, fontSize: 13 * s, letterSpacing: 1, color: entity.color }}>{entity.label}</span>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  const [selected, setSelected] = useState(null);
+  const [mode, setMode] = useState("out");
+  const [theme, setTheme] = useState("dark");
+  const t = THEMES[theme];
+
+  const outgoing = selected ? SYNERGIES.filter(s => s.from === selected && !s.dup) : [];
+  const incoming = selected ? SYNERGIES.filter(s => s.to === selected) : [];
+  const activeList = mode === "out" ? outgoing : incoming;
+  const connectedIds = selected ? [...new Set(activeList.map(s => mode === "out" ? s.to : s.from))] : [];
+  const entity = selected ? getEntity(selected) : null;
+
+  return (
+    <div style={{
+      display: "flex", width: "100%", height: "100vh",
+      background: t.bg, fontFamily: "'Inter', system-ui, sans-serif", color: t.text,
+      overflow: "hidden", transition: "background 0.6s ease, color 0.6s ease",
+    }}>
+      {/* LEFT: CANVAS */}
+      <div style={{ flex: 1, position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        {/* Title */}
+        <div style={{ position: "absolute", top: 20, left: 28, zIndex: 10 }}>
+          <div style={{ fontSize: 26, fontWeight: 800, color: t.aurentia, lineHeight: 1 }}>
+            Aurentia <span style={{ color: "#e8461e" }}>GROUP</span>
+          </div>
+          <div style={{ fontSize: 12, color: t.textMuted, marginTop: 4 }}>
+            Synergies Écosystème · {SYNERGIES.filter(s => !s.dup).length} flux · {ENTITIES.length} entités
+          </div>
+        </div>
+
+        {/* Theme toggle */}
+        <div style={{ position: "absolute", top: 20, right: selected ? 400 : 28, zIndex: 10, transition: "right 0.5s ease" }}>
+          <button onClick={() => setTheme(th => th === "dark" ? "light" : "dark")} style={{
+            display: "flex", alignItems: "center", gap: 8,
+            background: t.toggleBg, border: `1px solid ${t.border}`,
+            borderRadius: 10, padding: "8px 14px", cursor: "pointer",
+            color: t.text, fontSize: 12, fontWeight: 600, transition: "all 0.5s ease",
+          }}>
+            <span style={{ fontSize: 16 }}>{theme === "dark" ? "☀️" : "🌙"}</span>
+            {theme === "dark" ? "Light" : "Dark"}
+          </button>
+        </div>
+
+        {/* Hint */}
+        {!selected && (
+          <div style={{
+            position: "absolute", bottom: 24, left: "50%", transform: "translateX(-50%)",
+            fontSize: 12, color: t.textFaint, zIndex: 10,
+            background: t.surface, padding: "8px 18px", borderRadius: 10, border: `1px solid ${t.border}`,
+          }}>
+            Cliquez sur une entité pour explorer ses synergies
+          </div>
+        )}
+
+        {/* SVG */}
+        <svg width="760" height="620" viewBox="0 0 760 620" style={{ maxWidth: "100%", maxHeight: "100%" }}>
+          <defs>
+            <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse">
+              <circle cx="14" cy="14" r="0.8" fill={t.dot} />
+            </pattern>
+            {ENTITIES.map(e => (
+              <marker key={e.id} id={`ah-${e.id}`} markerWidth="10" markerHeight="8" refX="10" refY="4" orient="auto">
+                <polygon points="0 0, 10 4, 0 8" fill={e.color} />
+              </marker>
+            ))}
+          </defs>
+          <rect width="760" height="620" fill="url(#grid)" />
+          <text x={CX} y={CY + 8} textAnchor="middle" fill={t.dot} fontSize="48" fontWeight="900" opacity="0.6">Aurentia</text>
+          <circle cx={CX} cy={CY} r={RADIUS} fill="none" stroke={t.border} strokeWidth="0.8" strokeDasharray="3,5" />
+
+          {/* Ghost arrows */}
+          {!selected && SYNERGIES.filter(s => !s.dup).map((syn, i) => {
+            const from = getEntity(syn.from);
+            const path = buildPath(syn.from, syn.to);
+            return <path key={i} d={path} stroke={from.color} strokeWidth={1.8} fill="none" opacity={0.35} strokeDasharray="6,4" />;
+          })}
+
+          {/* Active arrows */}
+          {selected && activeList.map((syn, i) => {
+            const from = getEntity(syn.from);
+            const path = buildPath(syn.from, syn.to);
+            return (
+              <g key={i}>
+                <path d={path} stroke={from.color} strokeWidth={2.5} fill="none" opacity={0.6} markerEnd={`url(#ah-${syn.from})`} />
+                <circle r="3.5" fill={from.color} opacity="0.85">
+                  <animateMotion dur="2.5s" repeatCount="indefinite" path={path} />
+                </circle>
+              </g>
+            );
+          })}
+
+          {/* Nodes */}
+          {ENTITIES.map((e) => {
+            const pos = positions[e.id];
+            const isSel = selected === e.id;
+            const isConn = connectedIds.includes(e.id);
+            const isFaded = selected && !isSel && !isConn;
+            const nodeW = 150, nodeH = 76;
+            return (
+              <g key={e.id} onClick={() => setSelected(prev => prev === e.id ? null : e.id)}
+                style={{ cursor: "pointer", transition: "opacity 0.5s ease" }} opacity={isFaded ? 0.1 : 1}>
+                <rect x={pos.x - nodeW/2} y={pos.y - nodeH/2} width={nodeW} height={nodeH} rx={12}
+                  fill={e.color} opacity={isSel ? 0.18 : 0.1} />
+                <rect x={pos.x - nodeW/2} y={pos.y - nodeH/2} width={nodeW} height={nodeH} rx={12}
+                  fill="none" stroke={e.color} strokeWidth={isSel ? 2.5 : 1.5}
+                  opacity={isSel ? 0.9 : isConn ? 0.6 : 0.3} />
+                <text x={pos.x} y={pos.y - 12} textAnchor="middle" fill={t.textMuted} fontSize="12" fontWeight="500">Aurentia</text>
+                {e.isAgency ? (
+                  <text x={pos.x} y={pos.y + 10} textAnchor="middle" fill={t.aurentia} fontSize="18" fontWeight="800">.agency</text>
+                ) : e.id === "formation" ? (
+                  <text x={pos.x} y={pos.y + 10} textAnchor="middle" fill={e.color} fontSize="14" fontWeight="800" letterSpacing="1">FORMATION IA</text>
+                ) : (
+                  <text x={pos.x} y={pos.y + 10} textAnchor="middle" fill={e.color} fontSize="15" fontWeight="800" letterSpacing="0.5">for {e.label}</text>
+                )}
+                <text x={pos.x} y={pos.y + nodeH/2 - 8} textAnchor="middle" fill={t.textFaint} fontSize="8" fontWeight="500">{e.type}</text>
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+
+      {/* RIGHT: PANEL */}
+      <div style={{
+        width: selected ? 370 : 0, flexShrink: 0, background: t.panelBg,
+        borderLeft: selected ? `1px solid ${t.border}` : "none",
+        overflow: "hidden auto", transition: "width 0.5s ease-in-out",
+        padding: selected ? "24px 22px" : "0",
+      }}>
+        {entity && (
+          <>
+            <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 8 }}>
+              <div style={{ flex: 1 }}><AurentiaLogo entity={entity} theme={theme} size="lg" /></div>
+              <div onClick={() => setSelected(null)} style={{
+                width: 28, height: 28, borderRadius: 8, background: t.surface,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                cursor: "pointer", fontSize: 13, color: t.textMuted, border: `1px solid ${t.border}`,
+              }}>✕</div>
+            </div>
+
+            <div style={{
+              display: "inline-block", fontSize: 9, fontWeight: 700, textTransform: "uppercase",
+              letterSpacing: 1.2, padding: "3px 8px", borderRadius: 5,
+              background: entity.color + "18", color: entity.color, marginBottom: 8,
+            }}>{entity.type}</div>
+            <div style={{ fontSize: 12, color: t.textMuted, lineHeight: 1.6, marginBottom: 20 }}>{entity.desc}</div>
+
+            <div style={{ display: "flex", gap: 4, marginBottom: 18, background: t.surface, borderRadius: 10, padding: 4 }}>
+              {["out", "in"].map(key => (
+                <button key={key} onClick={() => setMode(key)} style={{
+                  flex: 1, padding: "8px 0", borderRadius: 8, border: "none", cursor: "pointer",
+                  fontSize: 11, fontWeight: 600,
+                  background: mode === key ? (key === "out" ? entity.color + "18" : t.surfaceHover) : "transparent",
+                  color: mode === key ? (key === "out" ? entity.color : t.text) : t.textMuted,
+                  transition: "all 0.3s ease",
+                }}>
+                  {key === "out" ? `Apporte à → (${outgoing.length})` : `← Reçoit de (${incoming.length})`}
+                </button>
+              ))}
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {activeList.map((syn, i) => {
+                const target = getEntity(mode === "out" ? syn.to : syn.from);
+                return (
+                  <div key={i} style={{ padding: "12px 14px", borderRadius: 12, background: t.surface, border: `1px solid ${t.border}` }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                      <div style={{ width: 8, height: 8, borderRadius: 3, background: target.color }} />
+                      <AurentiaLogo entity={target} theme={theme} size="sm" />
+                    </div>
+                    <div style={{ fontSize: 12, color: t.textMuted, lineHeight: 1.5, paddingLeft: 16 }}>{syn.text}</div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div style={{ height: 1, background: t.border, margin: "22px 0" }} />
+
+            <div style={{ marginBottom: 18 }}>
+              <div style={{ fontSize: 13, fontWeight: 800, marginBottom: 10 }}>Data <span style={{ color: "#e8461e" }}>Flywheel</span></div>
+              {["Entrepreneurs créent projets → données structurées", "Data enrichit Investors & Incubators", "Attirent plus d'entrepreneurs sur la plateforme", "Plus de données = meilleurs produits = boucle ♾️"].map((step, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: 8 }}>
+                  <div style={{
+                    width: 20, height: 20, borderRadius: "50%", background: "#e8461e",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 10, fontWeight: 800, flexShrink: 0, color: "#fff",
+                  }}>{i + 1}</div>
+                  <div style={{ fontSize: 11, color: t.textMuted, lineHeight: 1.5, paddingTop: 2 }}>{step}</div>
+                </div>
+              ))}
+            </div>
+
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 800, marginBottom: 10 }}>Pourquoi c'est <span style={{ color: "#e8461e" }}>défendable</span></div>
+              {[
+                { icon: "📊", title: "Data Network Effect", desc: "Scores plus précis avec le volume" },
+                { icon: "🔗", title: "Effets de réseau croisés", desc: "6 entités se nourrissent mutuellement" },
+                { icon: "🔒", title: "Lock-in progressif", desc: "Coût de switch augmente avec le temps" },
+              ].map((m, i) => (
+                <div key={i} style={{
+                  display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 8,
+                  padding: "10px 12px", background: t.surface, borderRadius: 10, border: `1px solid ${t.border}`,
+                }}>
+                  <span style={{ fontSize: 16 }}>{m.icon}</span>
+                  <div>
+                    <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 2 }}>{m.title}</div>
+                    <div style={{ fontSize: 11, color: t.textMuted, lineHeight: 1.4 }}>{m.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{
+              display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8, marginTop: 18,
+              padding: "14px 0", borderTop: `1px solid ${t.border}`,
+            }}>
+              {[
+                { v: "6", l: "Entités", c: "#e8461e" },
+                { v: String(SYNERGIES.filter(s => !s.dup).length), l: "Synergies", c: "#2563eb" },
+                { v: "0", l: "Silo", c: "#16a34a" },
+              ].map((s, i) => (
+                <div key={i} style={{ textAlign: "center" }}>
+                  <div style={{ fontSize: 20, fontWeight: 800, color: s.c }}>{s.v}</div>
+                  <div style={{ fontSize: 9, color: t.textMuted, textTransform: "uppercase", letterSpacing: 0.5 }}>{s.l}</div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ textAlign: "center", marginTop: 16, fontSize: 10, color: t.textFaint }}>AURENTIA GROUP — Avril 2026</div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
