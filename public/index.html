@@ -167,7 +167,7 @@ function App() {
         </div>
 
         {/* Theme toggle */}
-        <div style={{ position: "absolute", top: 20, right: selected ? 400 : 28, zIndex: 10, transition: "right 0.5s ease" }}>
+        <div style={{ position: "absolute", top: 20, right: selected ? 468 : 28, zIndex: 10, transition: "right 0.5s ease" }}>
           <button onClick={() => setTheme(th => th === "dark" ? "light" : "dark")} style={{
             display: "flex", alignItems: "center", gap: 8,
             background: t.toggleBg, border: `1px solid ${t.border}`,
@@ -259,10 +259,10 @@ function App() {
 
       {/* RIGHT: PANEL */}
       <div style={{
-        width: selected ? 370 : 0, flexShrink: 0, background: t.panelBg,
+        width: selected ? 440 : 0, flexShrink: 0, background: t.panelBg,
         borderLeft: selected ? `1px solid ${t.border}` : "none",
         overflow: "hidden auto", transition: "width 0.5s ease-in-out",
-        padding: selected ? "24px 22px" : "0",
+        padding: selected ? "28px 26px" : "0",
       }}>
         {entity && (
           <>
@@ -276,17 +276,17 @@ function App() {
             </div>
 
             <div style={{
-              display: "inline-block", fontSize: 9, fontWeight: 700, textTransform: "uppercase",
+              display: "inline-block", fontSize: 11, fontWeight: 700, textTransform: "uppercase",
               letterSpacing: 1.2, padding: "3px 8px", borderRadius: 5,
               background: entity.color + "18", color: entity.color, marginBottom: 8,
             }}>{entity.type}</div>
-            <div style={{ fontSize: 12, color: t.textMuted, lineHeight: 1.6, marginBottom: 20 }}>{entity.desc}</div>
+            <div style={{ fontSize: 14, color: t.textMuted, lineHeight: 1.6, marginBottom: 20 }}>{entity.desc}</div>
 
             <div style={{ display: "flex", gap: 4, marginBottom: 18, background: t.surface, borderRadius: 10, padding: 4 }}>
               {["out", "in"].map(key => (
                 <button key={key} onClick={() => setMode(key)} style={{
                   flex: 1, padding: "8px 0", borderRadius: 8, border: "none", cursor: "pointer",
-                  fontSize: 11, fontWeight: 600,
+                  fontSize: 13, fontWeight: 600,
                   background: mode === key ? (key === "out" ? entity.color + "18" : t.surfaceHover) : "transparent",
                   color: mode === key ? (key === "out" ? entity.color : t.text) : t.textMuted,
                   transition: "all 0.3s ease",
@@ -305,7 +305,7 @@ function App() {
                       <div style={{ width: 8, height: 8, borderRadius: 3, background: target.color }} />
                       <AurentiaLogo entity={target} theme={theme} size="sm" />
                     </div>
-                    <div style={{ fontSize: 12, color: t.textMuted, lineHeight: 1.5, paddingLeft: 16 }}>{syn.text}</div>
+                    <div style={{ fontSize: 14, color: t.textMuted, lineHeight: 1.5, paddingLeft: 16 }}>{syn.text}</div>
                   </div>
                 );
               })}
@@ -314,7 +314,7 @@ function App() {
             <div style={{ height: 1, background: t.border, margin: "22px 0" }} />
 
             <div style={{ marginBottom: 18 }}>
-              <div style={{ fontSize: 13, fontWeight: 800, marginBottom: 10 }}>Data <span style={{ color: "#e8461e" }}>Flywheel</span></div>
+              <div style={{ fontSize: 15, fontWeight: 800, marginBottom: 10 }}>Data <span style={{ color: "#e8461e" }}>Flywheel</span></div>
               {["Entrepreneurs créent projets → données structurées", "Data enrichit Investors & Incubators", "Attirent plus d'entrepreneurs sur la plateforme", "Plus de données = meilleurs produits = boucle ♾️"].map((step, i) => (
                 <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: 8 }}>
                   <div style={{
@@ -322,13 +322,13 @@ function App() {
                     display: "flex", alignItems: "center", justifyContent: "center",
                     fontSize: 10, fontWeight: 800, flexShrink: 0, color: "#fff",
                   }}>{i + 1}</div>
-                  <div style={{ fontSize: 11, color: t.textMuted, lineHeight: 1.5, paddingTop: 2 }}>{step}</div>
+                  <div style={{ fontSize: 13, color: t.textMuted, lineHeight: 1.5, paddingTop: 2 }}>{step}</div>
                 </div>
               ))}
             </div>
 
             <div>
-              <div style={{ fontSize: 13, fontWeight: 800, marginBottom: 10 }}>Pourquoi c'est <span style={{ color: "#e8461e" }}>défendable</span></div>
+              <div style={{ fontSize: 15, fontWeight: 800, marginBottom: 10 }}>Pourquoi c'est <span style={{ color: "#e8461e" }}>défendable</span></div>
               {[
                 { icon: "📊", title: "Data Network Effect", desc: "Scores plus précis avec le volume" },
                 { icon: "🔗", title: "Effets de réseau croisés", desc: "6 entités se nourrissent mutuellement" },
@@ -340,8 +340,8 @@ function App() {
                 }}>
                   <span style={{ fontSize: 16 }}>{m.icon}</span>
                   <div>
-                    <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 2 }}>{m.title}</div>
-                    <div style={{ fontSize: 11, color: t.textMuted, lineHeight: 1.4 }}>{m.desc}</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 2 }}>{m.title}</div>
+                    <div style={{ fontSize: 13, color: t.textMuted, lineHeight: 1.4 }}>{m.desc}</div>
                   </div>
                 </div>
               ))}
@@ -358,12 +358,12 @@ function App() {
               ].map((s, i) => (
                 <div key={i} style={{ textAlign: "center" }}>
                   <div style={{ fontSize: 20, fontWeight: 800, color: s.c }}>{s.v}</div>
-                  <div style={{ fontSize: 9, color: t.textMuted, textTransform: "uppercase", letterSpacing: 0.5 }}>{s.l}</div>
+                  <div style={{ fontSize: 11, color: t.textMuted, textTransform: "uppercase", letterSpacing: 0.5 }}>{s.l}</div>
                 </div>
               ))}
             </div>
 
-            <div style={{ textAlign: "center", marginTop: 16, fontSize: 10, color: t.textFaint }}>AURENTIA GROUP — Avril 2026</div>
+            <div style={{ textAlign: "center", marginTop: 16, fontSize: 12, color: t.textFaint }}>AURENTIA GROUP — Avril 2026</div>
           </>
         )}
       </div>
